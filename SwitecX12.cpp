@@ -49,7 +49,6 @@ SwitecX12::SwitecX12(unsigned int steps, unsigned char pinStep, unsigned char pi
 void SwitecX12::step(int dir)
 {
   digitalWrite(pinDir, dir > 0 ? LOW : HIGH);
-  digitalWrite(13, vel == maxVel ? HIGH : LOW);
   digitalWrite(pinStep, HIGH);
   delayMicroseconds(stepPulseMicrosec);
   digitalWrite(pinStep, LOW);
