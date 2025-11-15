@@ -14,35 +14,16 @@
 // 1st value is the speed step, 2nd value is delay in microseconds
 // 1st value in each row must be > 1st value in subsequent row
 // 1st value in last row should be == maxVel, must be <= maxVel
-static unsigned short defaultAccelTable[][2] = {
-    {30, 3000},
-    {65, 2920},
-    {100, 2780},
-    {135, 2600},
-    {170, 2380},
-    {205, 2140},
-    {240, 1890},
-    {275, 1650},
-    {310, 1420},
-    {345, 1210},
-    {380, 1020},
-    {415, 860},
-    {450, 730},
-    {485, 620},
-    {520, 530},
-    {555, 460},
-    {590, 410},
-    {625, 370},
-    {660, 340},
-    {695, 320},
-    {730, 310},
-    {765, 305},
-    {800, 300},
+static SwitecX12::AccelTable defaultAccelTable[] = {
+    {20, 3000},
+    {50, 1500},
+    {100, 1000},
+    {150, 800},
+    {300, 600}
 };
 
 const int stepPulseMicrosec = 1;
 const int resetStepMicrosec = 300;
-#define DEFAULT_ACCEL_TABLE_SIZE (sizeof(defaultAccelTable)/sizeof(*defaultAccelTable))
 
 SwitecX12::SwitecX12(unsigned int steps, unsigned char pinStep, unsigned char pinDir)
 {
@@ -60,8 +41,7 @@ SwitecX12::SwitecX12(unsigned int steps, unsigned char pinStep, unsigned char pi
   currentStep = 0;
   targetStep = 0;
 
-  accelTable = defaultAccelTable;
-  maxVel = defaultAccelTable[DEFAULT_ACCEL_TABLE_SIZE-1][0]; // last value in table.
+  setAccelTable(defaultAccelTable);
 }
 
 void SwitecX12::step(int dir)
@@ -139,12 +119,7 @@ void SwitecX12::advance()
   }
 
   // vel now defines delay
-  unsigned char i = 0;
-  // this is why vel must not be greater than the last vel in the table.
-  while (accelTable[i][0]<vel) {
-    i++;
-  }
-  microDelay = accelTable[i][1];
+  microDelay = getAccel(vel);
   time0 = micros();
 }
 
@@ -159,6 +134,15 @@ void SwitecX12::setPosition(unsigned int pos)
     time0 = micros();
     microDelay = 0;
   }
+}
+
+short SwitecX12::getAccel(int vel)
+{
+  // Loop through the table until we find a vel less than our current value.
+  unsigned char i = 0;
+  for (; accelTable[i].steps < abs(vel) && i < accelTableSize; i++)
+    ;
+  return accelTable[i].time;
 }
 
 void SwitecX12::update()
