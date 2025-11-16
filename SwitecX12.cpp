@@ -36,6 +36,7 @@ SwitecX12::SwitecX12(unsigned int steps, unsigned char pinStep, unsigned char pi
   digitalWrite(pinDir, LOW);
 
   dir = 0;
+  dirPrevious = 128; // invalid value to force first update
   vel = 0;
   stopped = true;
   currentStep = 0;
@@ -46,7 +47,13 @@ SwitecX12::SwitecX12(unsigned int steps, unsigned char pinStep, unsigned char pi
 
 void SwitecX12::step(int dir)
 {
-  digitalWrite(pinDir, dir > 0 ? LOW : HIGH);
+  if (dir != dirPrevious) {
+    // Required by VID6608, delay between direction change and step pulse
+    digitalWrite(pinDir, dir > 0 ? LOW : HIGH);
+    // Setup time must be > 100ns, we use resetStepMicrosec to be safe
+    delayMicroseconds(resetStepMicrosec);
+    dirPrevious = dir;
+  }
   digitalWrite(pinStep, HIGH);
   delayMicroseconds(stepPulseMicrosec);
   digitalWrite(pinStep, LOW);

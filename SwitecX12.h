@@ -20,7 +20,8 @@ class SwitecX12 {
     unsigned char accelTableSize;  // How many rows in the acceleration table
     unsigned int maxVel;           // fastest vel allowed
     unsigned int vel;              // steps travelled under acceleration
-    int dir;                      // direction -1,0,1
+    int8_t dir;                    // direction -1,0,1
+    int8_t dirPrevious;            // Last direction set to pinDir
     boolean stopped;               // true if stopped
     SwitecX12(unsigned int steps, unsigned char pinStep, unsigned char pinDir);
 
