@@ -130,6 +130,13 @@ void SwitecX12::advance()
   time0 = micros();
 }
 
+void SwitecX12::setCurrentPosition(unsigned int pos)
+{
+  // pos is unsigned so don't need to check for <0
+  if (pos >= steps) pos = steps-1;
+  currentStep = pos;
+}
+
 void SwitecX12::setPosition(unsigned int pos)
 {
   // pos is unsigned so don't need to check for <0

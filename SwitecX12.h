@@ -31,6 +31,7 @@ class SwitecX12 {
     void stepTo(int position);
     void advance();
     void update();
+    void setCurrentPosition(unsigned int pos);
     void setPosition(unsigned int pos);
     template <typename T, size_t N>
     void setAccelTable(T (&table)[N])
